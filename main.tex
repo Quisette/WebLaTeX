@@ -1,0 +1,241 @@
+% !TeX root = main.tex
+%!TEX program = lualatex
+\documentclass[ paper=a4paper, 12pt]{article}
+
+\usepackage{./preamble}
+\input{commands}
+
+
+\begin{document}
+
+\input{titlepage}
+
+
+\section{引言}
+本次實驗的目的是使學生熟悉向量網路分析儀（VNA）的基本操作，並測量待測元件（DUT）的 S 參數。實驗使用 R\&S ZVL 網路分析儀與 LiteVNA 來表徵微波元件，包括帶通濾波器、衰減器和傳輸線。其他目標包括理解向量與純量網路分析儀的差異、執行校準，以及計算相關物理量，如反射係數（\(\Gamma\)）、反射損耗（RL）、電壓駐波比（VSWR）和插入損耗（IL）。
+\section{Test Chapter}
+		\begin{Thm}{Test Theorem}{}
+			This is the content of The Test Theorem.
+		\end{Thm}
+		\begin{Lem}{Test Lemma}{}
+			This is the content of The Test Lemma.
+		\end{Lem}
+		\begin{Cor}{Test Corollary}{}
+			This is the content of The Test Corollary.
+		\end{Cor}
+		\begin{Def}{Test Definition}{}
+			This is the content of The Test Definition.
+		\end{Def}
+		\begin{Exp}{The Test Example}{}
+		 This is the content of The Test Example.
+		\end{Exp}
+\section{理論}
+\subsection{S 參數}
+S 參數描述線性網路的電氣特性，通過其端口的入射波與反射波關係來定義。對於雙端口網路，S 矩陣定義為：
+
+\[
+\begin{bmatrix}
+b_1 \\
+b_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+S_{11} & S_{12} \\
+S_{21} & S_{22}
+\end{bmatrix}
+\begin{bmatrix}
+a_1 \\
+a_2
+\end{bmatrix}
+\]
+
+其中：
+\begin{itemize}
+\item \(a_1, a_2\)：端口 1 和端口 2 的入射波電壓，
+\item \(b_1, b_2\)：端口 1 和端口 2 的反射波電壓。
+
+\end{itemize}
+
+各 S 參數的定義如下：
+\begin{itemize}
+\item \(S_{11} = \left. \frac{b_1}{a_1} \right|_{a_2=0}\)：當端口 2 匹配時，端口 1 的反射係數，
+\item \(S_{21} = \left. \frac{b_2}{a_1} \right|_{a_2=0}\)：當端口 2 匹配時，從端口 1 到端口 2 的傳輸係數，
+\item \(S_{12} = \left. \frac{b_1}{a_2} \right|_{a_1=0}\)：當端口 1 匹配時，從端口 2 到端口 1 的傳輸係數，
+\item \(S_{22} = \left. \frac{b_2}{a_2} \right|_{a_1=0}\)：當端口 1 匹配時，端口 2 的反射係數。
+
+\end{itemize}
+
+\subsection{S 參數的性質}
+\begin{itemize}
+\item \textbf{匹配端口}：對於完全匹配的端口 \(i\)，\(S_{ii} = 0\)。
+\item \textbf{互易性}：對於互易網路，\(S_{nm} = S_{mn}\)。
+\item \textbf{被動性}：對於被動網路，\(|S_{ij}| \leq 1\)。
+\item \textbf{無損網路}：對於無損且互易的網路，對第 \(i\) 端口，\(\sum_{n=1}^N |S_{ni}|^2 = 1\)。
+
+\end{itemize}
+
+\subsection{相關物理量}
+\begin{itemize}
+\item \textbf{反射損耗（Reflextion Loss，RL）}：
+\[
+\text{RL} = -20 \log |\Gamma| = -20 \log |S_{11}| \text{ (dB)}
+\]
+反射損耗越高，表示反射越小。
+\item \textbf{插入損耗（Insertion Loss，IL）}：
+\[
+\text{IL} = -20 \log |T| = -20 \log |S_{21}| \text{ (dB)}
+\]
+插入損耗越低，表示傳輸損失越小。
+\item \textbf{電壓駐波比（VSWR）}：
+\[
+\text{VSWR} = \frac{1 + |\Gamma|}{1 - |\Gamma|}
+\]
+其中 \(\Gamma = S_{11}\)，適用於端口 2 匹配的情況。
+\end{itemize}
+
+
+註：第二份文件中將 RL 定義為 \(20 \log \left| \frac{1}{S_{11}} \right|\)，IL 定義為 \(20 \log \left| \frac{1}{S_{21}} \right|\)，這與入射波與反射/傳輸波的比例一致。然而，微波工程的標準慣例（例如 Pozar, 1998）使用上述定義，本報告採用此標準以保持一致性。
+
+\section{實驗設備}
+使用的設備包括：
+\begin{itemize}
+\item R\&S ZVL 向量網路分析儀（頻率範圍 9 kHz–13.6 GHz，動態範圍 110 dB），
+\item ZV-Z136 校準套件，
+\item 帶通濾波器，
+\item 衰減器，
+\item 傳輸線，
+\item N-SMA 轉接頭。
+\end{itemize}
+
+
+網路分析儀配置了掃頻合成源，通過 PORT 1 和 PORT 2 連接到待測元件，並進行校準以確保測量精度。
+
+\section{實驗步驟}
+\subsection{校準}
+1. 通過「S 參數嚮導」軟鍵選擇 ZV-Z136 校準套件。
+2. 設置頻率範圍（9 kHz–13.6 GHz）和輸出功率（-10 dBm）。
+3. 在 PORT 1 和 PORT 2 分別連接並測量開路（open）、短路（short）和匹配（match）標準件。
+4. 將 PORT 1 和 PORT 2 通過直通（through）標準件連接並測量。
+5. 按下「DONE」完成完整的雙端口校準。
+
+\subsection{測量}
+1. 將待測元件（例如帶通濾波器、衰減器或傳輸線）連接到 PORT 1 和 PORT 2。
+2. 使用「Scale」\(\rightarrow\)「AUTO SCALE」調整顯示。
+3. 測量特定參數：
+    \begin{itemize}
+        \item \textbf{反射係數線性大小}：設置格式為「LIN MAG」。
+   \item \textbf{VSWR}：設置格式為「SWR」。
+   \item \textbf{Smith 圖}：設置格式為「SMITH CHART」以顯示 \(S_{11}\) 和 \(S_{22}\)。
+    \end{itemize}
+
+4. 使用標記（Marker）從顯示屏上讀取數值。
+
+\section{實驗結果}
+由於缺乏實際測量數據，本節以預期行為進行通用描述：
+\begin{itemize}
+\item \textbf{帶通濾波器}：在通帶內 \(|S_{21}|\) 應較高（低 IL），通帶外較低（高 IL）；\(|S_{11}|\) 在通帶內應較低（良好匹配）。
+\item \textbf{衰減器}：\(|S_{21}|\) 應顯示恆定衰減（例如理想情況下 13 dB），若匹配良好，\(|S_{11}|\) 和 \(|S_{22}|\) 接近零。
+\item \textbf{傳輸線}：\(|S_{21}|\) 隨頻率增加因損耗而降低，若匹配良好，\(|S_{11}|\) 較低。
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|l|l|l|c|c|}
+\hline
+\multirow{2}{*}{駐波標示} & \multirow{2}{*}{頻率 (GHz)} & \multirow{2}{*}{損耗 (dB)} & \multirow{2}{*}{駐波參考點} & \multicolumn{2}{c|}{Smith Chart} \\ \cline{5-6}
+& & & & S11 & S22 \\ \hline
+最大損耗 (mark1) & & & & & \\ \hline
+左側3dB點 (mark2) & & & & & \\ \hline
+右側3dB點 (mark3) & & & & & \\ \hline
+操作損耗 (mark2-3) & & & & & \\ \hline
+\multicolumn{4}{|c|}{} & S11 & S21 \\ \hline
+\multicolumn{4}{|c|}{S 參數參考點} & S12 & S22 \\ \hline
+\end{tabular}
+\caption{帶通濾波器 (1455-1925MHz) 測量數據}
+\end{table}
+
+\subsection*{2. 10 dB 衰減器}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|l|l|l|c|c|}
+\hline
+\multirow{2}{*}{駐波標示} & \multirow{2}{*}{頻率 (GHz)} & \multirow{2}{*}{損耗 (dB)} & \multirow{2}{*}{駐波參考點} & \multicolumn{2}{c|}{Smith Chart} \\ \cline{5-6}
+& & & & S11 & S22 \\ \hline
+衰減效果 & 10 & & & & \\ \hline
+\multicolumn{4}{|c|}{} & S11 & S21 \\ \hline
+\multicolumn{4}{|c|}{S 參數參考點} & S12 & S22 \\ \hline
+\end{tabular}
+\caption{10 dB 衰減器測量數據}
+\end{table}
+\end{itemize}
+
+完整的報告應包含 \(|S_{11}|\) 和 \(|S_{21}|\) 隨頻率變化的圖表以及 Smith 圖表示。
+
+\section{討論}
+網路分析儀測量有效表徵了待測元件的性能。校準消除了系統誤差（例如電纜損耗、失配），確保測量準確性。與純量網路分析儀不同，向量網路分析儀測量幅度和相位，能通過 Smith 圖分析阻抗。潛在誤差包括校準不當、連接器問題或因直流信號（依注意事項禁止）損壞待測元件。R\&S ZVL 的寬頻範圍（9 kHz–13.6 GHz）和高動態範圍（110 dB）提升了測量精度。
+
+\section{結論}
+本次實驗提供了 R\&S ZVL 和 LiteVNA 的實操經驗，增強了對 S 參數、其測量方法及校準重要性的理解。這些技能對於射頻和微波電路設計至關重要。
+
+\section{作業問題}
+\subsection{1. LiteVNA 工作原理與信號流程}
+LiteVNA 是一款向量網路分析儀，通過內部掃頻合成器產生射頻信號，從 PORT 1 輸出。信號與待測元件交互，產生反射波（\(b_1\)）和傳輸波（\(b_2\)），分別由 PORT 1 和 PORT 2 通過方向耦合器測量。接收器檢測幅度和相位，處理器根據比例（例如 \(S_{11} = b_1/a_1\)）計算 S 參數。使用已知標準件校準以修正誤差，結果顯示為幅度圖或 Smith 圖。
+
+\subsection{2. 向量與純量網路分析儀的差異}
+\begin{itemize}
+\item \textbf{向量}：測量幅度和相位，能全面表徵網路（例如阻抗、導納）。應用：射頻設計、Smith 圖分析。
+\item \textbf{純量}：僅測量幅度（例如 \(|S_{11}|\)、\(|S_{21}|\)）。應用：增益/損耗測量、較簡單系統。
+
+\end{itemize}
+
+\subsection{3. 反射係數轉換公式}
+\[
+\text{RL} = -20 \log |\Gamma| \text{ (dB)}
+\]
+\[
+\text{VSWR} = \frac{1 + |\Gamma|}{1 - |\Gamma|}
+\]
+
+\subsection{4. 傳輸係數與插入損耗}
+\[
+\text{IL} = -20 \log |T| \text{ (dB)}
+\]
+其中 \(T = S_{21}\)。註：衰減常數 \(\alpha\) 適用於傳輸線（\(T = e^{-\alpha l}\)），但對於雙端口元件，IL 直接與 \(S_{21}\) 相關。
+
+\subsection{5. 13 dB 理想衰減器的 S 參數}
+對於理想、匹配、互易的衰減器，衰減 13 dB（\(S_{21} = 10^{-13/20} \approx 0.2239\)）：
+\[
+S = \begin{bmatrix}
+0 & 0.2239 \\
+0.2239 & 0
+\end{bmatrix}
+\]
+
+\subsection{6. VSWR = 1.5 時的反射功率}
+給定 VSWR = 1.5：
+\[
+\frac{1 + |\Gamma|}{1 - |\Gamma|} = 1.5 \implies |\Gamma| = 0.2
+\]
+反射功率 = \(|\Gamma|^2 = 0.04\)，即入射功率的 4\%。
+
+\newpage
+\section{問題討論}
+
+\begin{enumerate}
+\item 說明LiteVNA工作原理，並利用方塊圖解釋射頻信號由網路
+分析儀輸出後，經過待測元件，再回到網路分析儀之流程及網
+路分析儀內部如何處理訊號將結果顯示在螢幕上之流程(參考
+網頁： https://nanovna.com/)。
+\item 說明向量網路分析儀及純量網路分析儀之差異及應用範圍。
+\item 寫出反射係數與反射損耗(return loss, RL)、電壓駐波比
+(VSWR)間的轉換公式。
+\item 寫出穿透係數T與衰減常數a、穿透損耗(insertion loss, IL)間
+的轉換公式。
+\item 寫出13 dB理想衰減器之二埠S參數。
+\item 使用網路分析儀量測分析一個負載之電壓駐波比為1.5，試計
+算出有多少功率會反射回網路分析儀。
+\end{enumerate}
+
+
+
+
+\end{document}
+

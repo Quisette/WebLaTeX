@@ -1,0 +1,110 @@
+% === Document Setup ===
+% \documentclass{article} % Default document class (assumed, as not explicitly provided)
+\usepackage[margin=1in]{geometry} % Sets page margins to 1 inch on all sides
+
+% === Language and Font Packages ===
+\usepackage{luatexja-fontspec} % Support for Japanese/Chinese fonts with LuaTeX
+\usepackage{luatexja} % LuaTeX support for Japanese typesetting
+\usepackage{zhnumber} % Chinese numbering (e.g., 一, 二, 三)
+\setmainjfont[JFM=eva/trad,Language=Chinese Traditional,AutoFakeSlant=0.3,AutoFakeBold=4,Kerning=On]{TW-Kai} % Sets main font to "kaiu" with Chinese Traditional settings
+\usepackage{pxrubrica} % Ruby annotations (e.g., furigana for Chinese/Japanese)
+
+% === Text Formatting and Layout ===
+\linespread{1} % Sets line spacing to single (1.0)
+\usepackage{indentfirst} % Indents first paragraph after section headings
+\usepackage{titlesec} % Customize section titles
+\usepackage{enumitem} % Enhanced list environments
+\usepackage[labelsep=none]{caption} % Customizes caption formatting (no space between label and text)
+\usepackage[]{adjustbox} % Tools for adjusting boxes (e.g., images, tables)
+\usepackage{pifont} % Provides dingbat symbols (e.g., \ding)
+\usepackage{xcolor} % Adds color support for text and elements
+\usepackage{float} % Improves float placement (e.g., figures, tables)
+\usepackage{multicol} % Multiple columns (e.g., for itemized lists)
+\usepackage{multirow} % Multi-row cells in tables	
+
+% === Section Numbering and Formatting ===
+\setcounter{secnumdepth}{4} % Depth of section numbering (up to subsubsubsection)
+\renewcommand\thesection{\bfseries{（\zhnum{section}）}} % Section numbers in Chinese (e.g., （一）)
+\renewcommand\thesubsection{\bfseries{\Alph{subsection}.}} % Subsections as A., B., etc.
+\renewcommand\thesubsubsection{\bfseries{\roman{subsubsection}.}} % Subsubsections as i., ii., etc.
+\titleformat{\section} % Customize section appearance
+  [block] % Treat label and title as one block
+  {\Large} % Font size for section title
+  {\bfseries{\zhnum{section}}、} % Section number format (e.g., 一、)
+  {0pc} % Spacing between number and title
+  {\bf} % Bold title
+  [] % No additional commands after title
+
+% === Mathematics and Symbols ===
+\usepackage{newtxtext, newtxmath} % NewTX font for text and math
+\usepackage{amsmath} % Enhanced math typesetting
+\usepackage[symbol]{footmisc} % Footnotes with symbols (*, †, etc.)
+\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Use symbols for footnote markers
+
+% === Graphics and Diagrams ===
+\usepackage{graphicx} % Include images
+\usepackage{tikz} % General-purpose drawing package
+\usetikzlibrary{circuits.ee.IEC,positioning} % TikZ libraries for electrical circuits and positioning
+\usepackage{circuitikz} % Specialized package for circuit diagrams
+% \usepackage{tex/tikzshogi} % Commented out: TikZ for Shogi diagrams
+
+% === Page Style and Headers/Footers ===
+\pagestyle{plain} % Default plain page style (overridden later by fancy)
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancy} % Switch to fancy page style
+\fancyhf{} % Clear default header/footer content
+\fancyhfoffset[L]{1cm} % Extend left margin by 1cm
+\fancyhfoffset[R]{1cm} % Extend right margin by 1cm
+\lhead{\bfseries \color{gray}\courseTitle \\ \reportTitle} % Left header: course and report title
+\cfoot{\thepage} % Center footer: page number
+\rhead{\bfseries \color{gray} \department\ \studentName\ (\studentID) \\ \bfseries \experimentTitle} % Right header: student info and experiment title
+\renewcommand{\footrulewidth}{0.4pt} % Thickness of footer rule
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}} % Store section title for header
+\newcommand{\sectionstar}[1]{% % Custom starred section command (no number)
+    \markboth{#1}{} % Save section title for header
+}
+
+
+
+% === Figures and Tables ===
+\renewcommand{\figurename}{\bfseries 圖} % Figure label as bold "圖"
+\renewcommand{\tablename}{\bfseries 表} % Table label as bold "表"
+\renewcommand{\thefigure}{\bfseries\arabic{figure}：} % Figure numbering (e.g., 1：)
+\renewcommand{\thetable}{\bfseries\arabic{table}：} % Table numbering (e.g., 1：)
+\usepackage{pgfplotstable} % Tables from PGFPlots
+\usepackage{csvsimple} % Import CSV data
+\usepackage{booktabs} % Professional table formatting
+
+% === Colored Boxes (tcolorbox) ===
+\usepackage[most]{tcolorbox} % Enhanced colored boxes
+\usepackage{cleveref} % Smart cross-referencing
+\tcbset{theostyle/.style={ % Style for theorems
+    enhanced, sharp corners,
+    attach boxed title to top left={xshift=-1mm, yshift=-4mm, yshifttext=-1mm},
+    top=1.5ex, colback=white, colframe=blue!75!black, fonttitle=\bfseries,
+    boxed title style={sharp corners, size=small, colback=blue!75!black, colframe=blue!75!black}
+}}
+\tcbset{defstyle/.style={ % Style for definitions
+    enhanced, sharp corners,
+    attach boxed title to top left={xshift=-1mm, yshift=-4mm, yshifttext=-1mm},
+    top=1.5ex, colback=white, colframe=green!50!black, fonttitle=\bfseries,
+    boxed title style={sharp corners, size=small, colback=green!50!black, colframe=green!50!black}
+}}
+\tcbset{expstyle/.style={ % Style for examples/warnings
+    enhanced, sharp corners,
+    attach boxed title to top left={xshift=-1mm, yshift=-4mm, yshifttext=-1mm},
+    top=1.5ex, colback=white, colframe=red!70!black, fonttitle=\bfseries,
+    boxed title style={sharp corners, size=small, colback=red!70!black, colframe=red!70!black}
+}}
+
+% === Theorem-Like Environments ===
+\newtcbtheorem[number within=section]{Thm}{Theorem}{theostyle}{thm} % Theorems
+\newtcbtheorem[number within=section]{Def}{Definition}{defstyle}{def} % Definitions
+\newtcbtheorem[number within=section]{Exp}{Example}{expstyle}{exp} % Examples
+\newtcbtheorem[number within=tcb@cnt@Thm]{Lem}{Lemma}{theostyle}{lem} % Lemmas
+\newtcbtheorem[number within=tcb@cnt@Thm]{Cor}{Corollary}{theostyle}{cor} % Corollaries
+\newtcbtheorem[number within=section]{Wng}{Warning}{expstyle}{Wng} % Warnings
+\newtcbtheorem[number within=section]{Tip}{Tips}{theostyle}{Tip} % Tips
+
+% === Placeholder Environment (Undefined) ===
+\newenvironment{question}{begdef}{enddef} % Undefined environment (likely a typo or placeholder)
